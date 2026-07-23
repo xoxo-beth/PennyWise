@@ -1,17 +1,34 @@
-# expense_tracker
+# 💚 PennyWise
 
-A new Flutter project.
+A modern expense tracker built with Flutter to help users manage income, expenses, and understand their spending habits.
 
-## Getting Started
+## ✨ Features
 
-This project is a starting point for a Flutter application.
+- Splash Screen
+- Login Screen
+- Home Dashboard (Coming Soon)
+- Add Transactions
+- Transaction History
+- Spending Statistics
 
-A few resources to get you started if this is your first Flutter project:
+## 🛠️ Built With
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+- Flutter
+- Dart
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 🚧 Project Status
+
+Currently under development.
+
+## 📸 Screenshots
+
+(Coming Soon)
+# What I learnt
+How to use scaffold
+How to use themes and applying them
+How to work with statefulwidget
+How to use Git
+
+## 👩🏽‍💻 Developer
+
+Built by Beth.
