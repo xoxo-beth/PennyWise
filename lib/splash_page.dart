@@ -29,10 +29,10 @@ class _SplashPageState extends State<SplashPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        body: Center(
+    return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.primary,
+      body: SafeArea(
+        child: Center(
           child: Text(
             'PennyWise.',
             style: Theme.of(context).textTheme.displayLarge,
