@@ -6,7 +6,7 @@ A modern expense tracker built with Flutter to help users manage income, expense
 
 - Splash Screen
 - Login Screen
-- Home Dashboard (Coming Soon)
+- Home Dashboard (In Progress)
 - Add Transactions
 - Transaction History
 - Spending Statistics
@@ -28,6 +28,11 @@ How to use scaffold
 How to use themes and applying them
 How to work with statefulwidget
 How to use Git
+How to work with userinput using TextEditingController
+The difference between Navigator.push and Navigator.pushReplacement and when to use them
+The difference between setState and initState and when to use them
+Using Cards
+
 
 ## 👩🏽‍💻 Developer
 
