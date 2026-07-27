@@ -85,13 +85,14 @@ class _HomePageState extends State<HomePage> {
               decoration: InputDecoration(hintText: 'Enter Amount'),
             ),
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 12.0,
                     vertical: 24,
                   ),
-                  child: ElevatedButton(
+                  child: ElevatedButton.icon(
                     onPressed: () {
                       String typedText = _amountController.text;
                       double? amount = double.tryParse(typedText);
@@ -116,7 +117,8 @@ class _HomePageState extends State<HomePage> {
                         vertical: 12,
                       ),
                     ),
-                    child: Text('Deposit'),
+                    icon: Icon(Icons.south_east),
+                    label: Text('Deposit'),
                   ),
                 ),
                 SizedBox(width: 16),
@@ -125,7 +127,7 @@ class _HomePageState extends State<HomePage> {
                     horizontal: 12.0,
                     vertical: 24.0,
                   ),
-                  child: ElevatedButton(
+                  child: ElevatedButton.icon(
                     onPressed: () {
                       String typedText = _amountController.text;
                       double? amount = double.tryParse(typedText);
@@ -150,7 +152,8 @@ class _HomePageState extends State<HomePage> {
                         vertical: 12,
                       ),
                     ),
-                    child: Text('Withdraw'),
+                    icon: Icon(Icons.north_east),
+                    label: Text('Withdraw'),
                   ),
                 ),
               ],
