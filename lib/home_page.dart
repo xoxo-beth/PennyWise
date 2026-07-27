@@ -25,6 +25,45 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  void _showAmountSheet(bool isDeposit) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(isDeposit ? 'Deposit Amount' : 'Withdraw Amount'),
+              SizedBox(height: 12),
+              TextField(
+                controller: _amountController,
+                decoration: InputDecoration(hintText: 'Enter Amount'),
+              ),
+              SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  String typedText = _amountController.text;
+                  double? amount = double.tryParse(typedText);
+                  if (amount == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Please enter an amount')),
+                    );
+                  } else {
+                    _balanceChange(amount, isDeposit);
+                    _amountController.clear();
+                    Navigator.pop(context);
+                  }
+                },
+                child: Text(isDeposit ? 'Confirm Deposit' : 'Confirm Withdraw'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -80,10 +119,6 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-            TextField(
-              controller: _amountController,
-              decoration: InputDecoration(hintText: 'Enter Amount'),
-            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -94,18 +129,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   child: ElevatedButton.icon(
                     onPressed: () {
-                      String typedText = _amountController.text;
-                      double? amount = double.tryParse(typedText);
-                      if (amount == null) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Please enter an amount'),
-                          ),
-                        );
-                      } else {
-                        _balanceChange(amount, true);
-                        _amountController.clear();
-                      }
+                      _showAmountSheet(true);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color.fromARGB(255, 150, 203, 185),
@@ -129,18 +153,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   child: ElevatedButton.icon(
                     onPressed: () {
-                      String typedText = _amountController.text;
-                      double? amount = double.tryParse(typedText);
-                      if (amount == null) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Please enter an amount'),
-                          ),
-                        );
-                      } else {
-                        _balanceChange(amount, false);
-                        _amountController.clear();
-                      }
+                      _showAmountSheet(false);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color.fromARGB(255, 150, 203, 185),
