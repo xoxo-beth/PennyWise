@@ -7,21 +7,46 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
+class Transaction {
+  final bool isDeposit;
+  final String description;
+  final double amount;
+  final DateTime date;
+
+  Transaction({
+    required this.isDeposit,
+    required this.description,
+    required this.amount,
+    required this.date,
+  });
+}
+
 class _HomePageState extends State<HomePage> {
   double balance = 100000.00;
+  List<Transaction> transactions = [];
   String formatCurrency(double amount) {
     return '₦${amount.toStringAsFixed(2)}';
   }
 
   final TextEditingController _amountController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
 
-  void _balanceChange(double amount, bool isDeposit) {
+  void _balanceChange(double amount, bool isDeposit, String description) {
     setState(() {
       if (isDeposit) {
         balance = balance + amount;
       } else {
         balance = balance - amount;
       }
+
+      transactions.add(
+        Transaction(
+          isDeposit: isDeposit,
+          description: description,
+          amount: amount,
+          date: DateTime.now(),
+        ),
+      );
     });
   }
 
@@ -40,18 +65,32 @@ class _HomePageState extends State<HomePage> {
                 controller: _amountController,
                 decoration: InputDecoration(hintText: 'Enter Amount'),
               ),
+              SizedBox(height: 12),
+              TextField(
+                controller: _descriptionController,
+                decoration: InputDecoration(hintText: 'What was this for?'),
+              ),
               SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
                   String typedText = _amountController.text;
                   double? amount = double.tryParse(typedText);
+                  String description = _descriptionController.text;
+
                   if (amount == null) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Please enter an amount')),
                     );
+                  } else if (description.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Please enter a description'),
+                      ),
+                    );
                   } else {
-                    _balanceChange(amount, isDeposit);
+                    _balanceChange(amount, isDeposit, description);
                     _amountController.clear();
+                    _descriptionController.clear();
                     Navigator.pop(context);
                   }
                 },
@@ -170,6 +209,52 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ],
+            ),
+            Expanded(
+              child: ListView.builder(
+                itemCount: transactions.length,
+                itemBuilder: (context, index) {
+                  Transaction t = transactions[index];
+                  return Card(
+                    margin: const EdgeInsets.symmetric(
+                      vertical: 6,
+                      horizontal: 8,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: t.isDeposit ? Colors.green : Colors.red,
+                          width: 2,
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Row(
+                          children: [
+                            Icon(
+                              t.isDeposit ? Icons.south_east : Icons.north_east,
+                              color: t.isDeposit ? Colors.green : Colors.red,
+                            ),
+                            SizedBox(width: 12),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(formatCurrency(t.amount)),
+                                Text(t.description),
+                                Text(t.date.toString()),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
             ),
           ],
         ),
