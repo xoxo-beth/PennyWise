@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fl_chart/fl_chart.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -284,53 +285,73 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildStatisticsContent() {
     return Center(
-      child: Row(
+      child: Column(
         children: [
-          Expanded(
-            child: Card(
-              elevation: 4,
-              color: Colors.transparent,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Container(
-                height: 200,
-                color: Color.fromARGB(255, 3, 40, 28),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.south_east),
-                    Text(
-                      formatCurrency(_totalIncome()),
-                      style: TextStyle(color: Colors.black),
-                    ),
-                  ],
+          PieChart(
+            PieChartData(
+              sections: [
+                PieChartSectionData(
+                  value: _totalIncome(),
+                  color: Color.fromARGB(255, 3, 40, 28),
+                  title: 'Income',
                 ),
-              ),
+                PieChartSectionData(
+                  value: _totalExpense(),
+                  color: Color.fromARGB(255, 13, 84, 62),
+                  title: 'Expense',
+                ),
+              ],
             ),
           ),
-          Expanded(
-            child: Card(
-              elevation: 4,
-              color: const Color.fromARGB(0, 4, 48, 15),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Container(
-                height: 200,
-                color: Color.fromARGB(255, 13, 84, 62),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.north_east),
-                    Text(
-                      formatCurrency(_totalExpense()),
-                      style: TextStyle(color: Colors.black),
+          Row(
+            children: [
+              Expanded(
+                child: Card(
+                  elevation: 4,
+                  color: Colors.transparent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Container(
+                    height: 200,
+                    color: Color.fromARGB(255, 3, 40, 28),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.south_east),
+                        Text(
+                          formatCurrency(_totalIncome()),
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
-            ),
+              Expanded(
+                child: Card(
+                  elevation: 4,
+                  color: const Color.fromARGB(0, 4, 48, 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Container(
+                    height: 200,
+                    color: Color.fromARGB(255, 13, 84, 62),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.north_east),
+                        Text(
+                          formatCurrency(_totalExpense()),
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
