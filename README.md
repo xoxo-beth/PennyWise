@@ -32,6 +32,7 @@ How to work with userinput using TextEditingController
 The difference between Navigator.push and Navigator.pushReplacement and when to use them
 The difference between setState and initState and when to use them
 Using Cards
+How to use NavigationBar and bottomNavigationBar
 
 
 ## 👩🏽‍💻 Developer

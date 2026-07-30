@@ -1,6 +1,7 @@
 //import 'package:expense_tracker/splash_page.dart';
 import 'package:expense_tracker/home_page.dart';
 import 'package:flutter/material.dart';
+import 'package:expense_tracker/app_colors.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -10,6 +11,29 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  bool seePassword = false;
+
+  void _checkDetails() {
+    String typedEmail = _emailController.text;
+    String typedPassword = _passwordController.text;
+    if (typedEmail == '') {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Please enter your email')));
+    } else if (typedPassword == '') {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Enter your password')));
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: ((context) => HomePage())),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,6 +48,7 @@ class _LoginPageState extends State<LoginPage> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
               child: TextField(
+                controller: _emailController,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -31,7 +56,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   hintText: 'name@email.com',
                   filled: true,
-                  fillColor: Color.fromARGB(255, 150, 203, 185),
+                  fillColor: AppColors.lightGreen,
                 ),
               ),
             ),
@@ -39,6 +64,8 @@ class _LoginPageState extends State<LoginPage> {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 24.0),
               child: TextField(
+                controller: _passwordController,
+                obscureText: !seePassword,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -46,7 +73,17 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   hintText: 'password',
                   filled: true,
-                  fillColor: Color.fromARGB(255, 150, 203, 185),
+                  fillColor: AppColors.lightGreen,
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      setState(() {
+                        seePassword = !seePassword;
+                      });
+                    },
+                    icon: Icon(
+                      seePassword ? Icons.visibility : Icons.visibility_off,
+                    ),
+                  ),
                   //fillColor: Color(0xFF10B981),
                 ),
               ),
@@ -60,13 +97,10 @@ class _LoginPageState extends State<LoginPage> {
               padding: EdgeInsets.symmetric(horizontal: 10),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color.fromARGB(255, 150, 203, 185),
+                  backgroundColor: AppColors.lightGreen,
                 ),
                 onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: ((context) => HomePage())),
-                  );
+                  _checkDetails();
                 },
                 child: const Text('Log In'),
               ),

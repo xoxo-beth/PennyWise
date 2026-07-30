@@ -1,3 +1,4 @@
+import 'package:expense_tracker/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
@@ -89,6 +90,10 @@ class _HomePageState extends State<HomePage> {
                         content: Text('Please enter a description'),
                       ),
                     );
+                  } else if (!isDeposit && amount > balance) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Insufficient funds')),
+                    );
                   } else {
                     _balanceChange(amount, isDeposit, description);
                     _amountController.clear();
@@ -144,9 +149,9 @@ class _HomePageState extends State<HomePage> {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      Color.fromARGB(255, 13, 84, 62),
-                      Color.fromARGB(255, 7, 67, 48),
-                      Color.fromARGB(255, 3, 40, 28),
+                      const Color.fromARGB(255, 77, 150, 125),
+                      const Color.fromARGB(255, 52, 139, 112),
+                      const Color.fromARGB(255, 38, 119, 94),
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -167,7 +172,7 @@ class _HomePageState extends State<HomePage> {
                       Text(
                         formatCurrency(balance),
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          color: const Color.fromARGB(255, 6, 38, 6),
+                          color: AppColors.textOnLight,
                         ),
                       ),
                     ],
@@ -189,7 +194,7 @@ class _HomePageState extends State<HomePage> {
                     _showAmountSheet(true);
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color.fromARGB(255, 150, 203, 185),
+                    backgroundColor: AppColors.lightGreen,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -213,7 +218,7 @@ class _HomePageState extends State<HomePage> {
                     _showAmountSheet(false);
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color.fromARGB(255, 150, 203, 185),
+                    backgroundColor: AppColors.lightGreen,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -287,20 +292,75 @@ class _HomePageState extends State<HomePage> {
     return Center(
       child: Column(
         children: [
-          PieChart(
-            PieChartData(
-              sections: [
-                PieChartSectionData(
-                  value: _totalIncome(),
-                  color: Color.fromARGB(255, 3, 40, 28),
-                  title: 'Income',
-                ),
-                PieChartSectionData(
-                  value: _totalExpense(),
-                  color: Color.fromARGB(255, 13, 84, 62),
-                  title: 'Expense',
-                ),
-              ],
+          Card(
+            elevation: 4,
+            color: AppColors.lightGreen,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: 200,
+                    width: 200,
+                    child: PieChart(
+                      PieChartData(
+                        sections: [
+                          PieChartSectionData(
+                            value: _totalIncome(),
+                            title: '',
+                            color: AppColors.midGreen,
+                          ),
+                          PieChartSectionData(
+                            value: _totalExpense(),
+                            title: '',
+                            color: AppColors.darkGreen,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 16),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            width: 12,
+                            height: 12,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: AppColors.midGreen,
+                            ),
+                          ),
+                          SizedBox(width: 8),
+                          Text('Income'),
+                        ],
+                      ),
+                      SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Container(
+                            width: 12,
+                            height: 12,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: AppColors.darkGreen,
+                            ),
+                          ),
+                          SizedBox(width: 8),
+                          Text('Expenses'),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
           Row(
@@ -310,11 +370,11 @@ class _HomePageState extends State<HomePage> {
                   elevation: 4,
                   color: Colors.transparent,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(16),
                   ),
                   child: Container(
                     height: 200,
-                    color: Color.fromARGB(255, 3, 40, 28),
+                    color: AppColors.midGreen,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -333,11 +393,11 @@ class _HomePageState extends State<HomePage> {
                   elevation: 4,
                   color: const Color.fromARGB(0, 4, 48, 15),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(16),
                   ),
                   child: Container(
                     height: 200,
-                    color: Color.fromARGB(255, 13, 84, 62),
+                    color: AppColors.darkGreen,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
