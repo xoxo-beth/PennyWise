@@ -156,7 +156,7 @@ class _HomePageState extends State<HomePage> {
                               content: Text('Please enter a description'),
                             ),
                           );
-                        } else if (selectedCategory == null) {
+                        } else if (!isDeposit && selectedCategory == null) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(content: Text('Pick a category')),
                           );
@@ -569,10 +569,19 @@ class _HomePageState extends State<HomePage> {
   Widget _buildPlanningContent() {
     return Column(
       children: [
-        ElevatedButton.icon(
-          onPressed: _showAddBudgetSheet,
-          icon: Icon(Icons.add),
-          label: Text('Add Budget'),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            ElevatedButton(
+              onPressed: _showAddBudgetSheet,
+              child: Icon(Icons.add),
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+            ),
+          ],
         ),
         Expanded(
           child: ListView.builder(
