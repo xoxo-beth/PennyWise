@@ -14,27 +14,50 @@ class Transaction {
   final String description;
   final double amount;
   final DateTime date;
+  final String? category;
 
   Transaction({
     required this.isDeposit,
     required this.description,
     required this.amount,
     required this.date,
+    this.category,
   });
+}
+
+class BudgetCategory {
+  String name;
+  double plannedAmount;
+  double spentAmount = 0;
+
+  BudgetCategory({required this.name, required this.plannedAmount});
 }
 
 class _HomePageState extends State<HomePage> {
   double balance = 100000.00;
   int currentScreen = 0;
   List<Transaction> transactions = [];
+  List<BudgetCategory> budgetCategories = [];
   String formatCurrency(double amount) {
     return '₦${amount.toStringAsFixed(2)}';
   }
 
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _customCategoryController =
+      TextEditingController();
+  final TextEditingController _budgetNameController = TextEditingController();
+  final TextEditingController _plannedAmountController =
+      TextEditingController();
 
-  void _balanceChange(double amount, bool isDeposit, String description) {
+  String? selectedCategory;
+
+  void _balanceChange(
+    double amount,
+    bool isDeposit,
+    String description,
+    String? category,
+  ) {
     setState(() {
       if (isDeposit) {
         balance = balance + amount;
@@ -48,6 +71,9 @@ class _HomePageState extends State<HomePage> {
           description: description,
           amount: amount,
           date: DateTime.now(),
+          category: selectedCategory == 'Other'
+              ? _customCategoryController.text
+              : selectedCategory,
         ),
       );
     });
@@ -56,52 +82,174 @@ class _HomePageState extends State<HomePage> {
   void _showAmountSheet(bool isDeposit) {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(isDeposit ? 'Deposit Amount' : 'Withdraw Amount'),
+                    SizedBox(height: 12),
+                    TextField(
+                      controller: _amountController,
+                      decoration: InputDecoration(hintText: 'Enter Amount'),
+                    ),
+                    SizedBox(height: 12),
+                    TextField(
+                      controller: _descriptionController,
+                      decoration: InputDecoration(
+                        hintText: 'What was this for?',
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                    if (!isDeposit)
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children:
+                            ['Food', 'Transport', 'Entertainment', 'Other'].map(
+                              (category) {
+                                return ChoiceChip(
+                                  label: Text(category),
+                                  selected: selectedCategory == category,
+                                  onSelected: (selected) {
+                                    setModalState(() {
+                                      selectedCategory = selected
+                                          ? category
+                                          : null;
+                                    });
+                                  },
+                                );
+                              },
+                            ).toList(),
+                      ),
+                    if (!isDeposit && selectedCategory == 'Other')
+                      Padding(
+                        padding: const EdgeInsets.only(top: 12),
+                        child: TextField(
+                          controller: _customCategoryController,
+                          decoration: InputDecoration(
+                            hintText: 'Enter custom category',
+                          ),
+                        ),
+                      ),
+                    SizedBox(height: 12),
+                    ElevatedButton(
+                      onPressed: () {
+                        String typedText = _amountController.text;
+                        double? amount = double.tryParse(typedText);
+                        String description = _descriptionController.text;
+
+                        if (amount == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Please enter an amount'),
+                            ),
+                          );
+                        } else if (description.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Please enter a description'),
+                            ),
+                          );
+                        } else if (selectedCategory == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Pick a category')),
+                          );
+                        } else if (!isDeposit && amount > balance) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Insufficient funds')),
+                          );
+                        } else {
+                          _balanceChange(
+                            amount,
+                            isDeposit,
+                            description,
+                            selectedCategory,
+                          );
+                          _amountController.clear();
+                          _descriptionController.clear();
+                          _customCategoryController.clear();
+                          selectedCategory = null;
+                          Navigator.pop(context);
+                        }
+                      },
+                      child: Text(
+                        isDeposit ? 'Confirm Deposit' : 'Confirm Withdraw',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _showAddBudgetSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
       builder: (context) {
         return Padding(
-          padding: const EdgeInsets.all(20),
+          padding: EdgeInsetsGeometry.only(
+            left: 20,
+            right: 20,
+            top: 20,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(isDeposit ? 'Deposit Amount' : 'Withdraw Amount'),
-              SizedBox(height: 12),
               TextField(
-                controller: _amountController,
-                decoration: InputDecoration(hintText: 'Enter Amount'),
+                controller: _budgetNameController,
+                decoration: InputDecoration(hintText: 'Category name'),
               ),
-              SizedBox(height: 12),
+              SizedBox(height: 8),
               TextField(
-                controller: _descriptionController,
-                decoration: InputDecoration(hintText: 'What was this for?'),
+                controller: _plannedAmountController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  hintText: 'Enter your budget for this category',
+                ),
               ),
-              SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
-                  String typedText = _amountController.text;
-                  double? amount = double.tryParse(typedText);
-                  String description = _descriptionController.text;
-
-                  if (amount == null) {
+                  if (_budgetNameController.text.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Please enter an amount')),
+                      const SnackBar(content: Text('Please enter a category')),
                     );
-                  } else if (description.isEmpty) {
+                  }
+                  double? plannedAmount = double.tryParse(
+                    _plannedAmountController.text,
+                  );
+                  if (plannedAmount == null) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text('Please enter a description'),
+                        content: Text('Enter your budget for this category'),
                       ),
                     );
-                  } else if (!isDeposit && amount > balance) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Insufficient funds')),
-                    );
-                  } else {
-                    _balanceChange(amount, isDeposit, description);
-                    _amountController.clear();
-                    _descriptionController.clear();
-                    Navigator.pop(context);
+                    return;
                   }
+                  setState(() {
+                    budgetCategories.add(
+                      BudgetCategory(
+                        name: _budgetNameController.text,
+                        plannedAmount: plannedAmount,
+                      ),
+                    );
+                  });
+                  _budgetNameController.clear();
+                  _plannedAmountController.clear();
+                  Navigator.pop(context);
                 },
-                child: Text(isDeposit ? 'Confirm Deposit' : 'Confirm Withdraw'),
+                child: Text('Confirm'),
               ),
             ],
           ),
@@ -419,7 +567,46 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildPlanningContent() {
-    return const Center(child: Text('Planning page coming soon'));
+    return Column(
+      children: [
+        ElevatedButton.icon(
+          onPressed: _showAddBudgetSheet,
+          icon: Icon(Icons.add),
+          label: Text('Add Budget'),
+        ),
+        Expanded(
+          child: ListView.builder(
+            itemCount: budgetCategories.length,
+            itemBuilder: (context, index) {
+              var budget = budgetCategories[index];
+              return Card(
+                margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      Text(budget.name),
+                      Text(
+                        '${formatCurrency(budget.spentAmount)}/${formatCurrency(budget.plannedAmount)}',
+                      ),
+                      LinearProgressIndicator(
+                        value: (budget.spentAmount / budget.plannedAmount)
+                            .clamp(0.0, 1.0),
+                        color: Colors.red,
+                        backgroundColor: Colors.grey,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
   }
 
   @override
