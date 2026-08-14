@@ -35,7 +35,7 @@ Using Cards
 How to use NavigationBar and bottomNavigationBar
 Snackbar and its uses
 How to use bottomNavigation bar
-Fixed an iverflow bug in the bottom sheet
+Fixed an overflow bug in the bottom sheet
 Added a compulsory category validation
 Started the planning tab UI
 Created a new class called BudgetClassCategory for the planning tab
