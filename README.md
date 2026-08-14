@@ -33,7 +33,8 @@ The difference between Navigator.push and Navigator.pushReplacement and when to 
 The difference between setState and initState and when to use them
 Using Cards
 How to use NavigationBar and bottomNavigationBar
-
+Snackbar and its uses
+How to use bottomNavigation bar
 
 ## 👩🏽‍💻 Developer
 
