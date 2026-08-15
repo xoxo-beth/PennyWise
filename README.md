@@ -51,7 +51,7 @@ Created a new class called BudgetClassCategory for the planning tab
 2. Linking logic still not built — withdrawal transactions don't yet update the matching `BudgetCategory`'s `spentAmount`, so both bars (and the old progress-bar cards) will show `0` for spent until this is done.
 3. Old card-list UI (with `LinearProgressIndicator`) is likely being replaced by the new bar chart design — decide whether to keep both or remove the card list/progress bars entirely.
 
-## Dev Log — [Date]
+## Dev Log — [15/08/26]
 
 ### Bug Fixes
 - **Case-sensitive category matching**: linking logic (`_balanceChange`) compared `category == budget.name` as a strict, case-sensitive match, so casing mismatches (e.g. "transport" vs "Transport") silently failed to update `spentAmount`. Fixed by normalizing both sides with `.toLowerCase()` before comparing.
