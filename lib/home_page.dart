@@ -42,6 +42,26 @@ class _HomePageState extends State<HomePage> {
     return '₦${amount.toStringAsFixed(2)}';
   }
 
+  List<BarChartGroupData> _buildBarGroups() {
+    List<BarChartGroupData> barGroups = [];
+    for (int i = 0; i < budgetCategories.length; i++) {
+      var budget = budgetCategories[i];
+      barGroups.add(
+        BarChartGroupData(
+          x: i,
+          barRods: [
+            BarChartRodData(
+              toY: budget.plannedAmount,
+              color: AppColors.darkGreen,
+            ),
+            BarChartRodData(toY: budget.spentAmount, color: AppColors.midGreen),
+          ],
+        ),
+      );
+    }
+    return barGroups;
+  }
+
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _customCategoryController =
@@ -76,6 +96,12 @@ class _HomePageState extends State<HomePage> {
               : selectedCategory,
         ),
       );
+      for (var budget in budgetCategories) {
+        if (!isDeposit &&
+            category?.toLowerCase() == budget.name.toLowerCase()) {
+          budget.spentAmount += amount;
+        }
+      }
     });
   }
 
@@ -219,6 +245,7 @@ class _HomePageState extends State<HomePage> {
                   hintText: 'Enter your budget for this category',
                 ),
               ),
+              SizedBox(height: 8),
               ElevatedButton(
                 onPressed: () {
                   if (_budgetNameController.text.isEmpty) {
@@ -574,14 +601,55 @@ class _HomePageState extends State<HomePage> {
           children: [
             ElevatedButton(
               onPressed: _showAddBudgetSheet,
-              child: Icon(Icons.add),
               style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
+                backgroundColor: AppColors.lightGreen,
+                iconColor: AppColors.darkGreen,
               ),
+              child: Icon(Icons.add),
             ),
           ],
+        ),
+        Card(
+          color: AppColors.lightGreen,
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: SizedBox(
+                      height: 250,
+                      width: (budgetCategories.length * 100).toDouble(),
+                      child: BarChart(
+                        BarChartData(
+                          barGroups: _buildBarGroups(),
+                          titlesData: FlTitlesData(
+                            bottomTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                showTitles: true,
+                                getTitlesWidget: (value, meta) {
+                                  int index = value.toInt();
+                                  return Text(
+                                    budgetCategories[index].name,
+                                    style: const TextStyle(fontSize: 10),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
         Expanded(
           child: ListView.builder(

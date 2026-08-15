@@ -51,6 +51,20 @@ Created a new class called BudgetClassCategory for the planning tab
 2. Linking logic still not built — withdrawal transactions don't yet update the matching `BudgetCategory`'s `spentAmount`, so both bars (and the old progress-bar cards) will show `0` for spent until this is done.
 3. Old card-list UI (with `LinearProgressIndicator`) is likely being replaced by the new bar chart design — decide whether to keep both or remove the card list/progress bars entirely.
 
+## Dev Log — [Date]
+
+### Bug Fixes
+- **Case-sensitive category matching**: linking logic (`_balanceChange`) compared `category == budget.name` as a strict, case-sensitive match, so casing mismatches (e.g. "transport" vs "Transport") silently failed to update `spentAmount`. Fixed by normalizing both sides with `.toLowerCase()` before comparing.
+- **Add Budget button unresponsive**: an unbounded `ListView.builder` was accidentally nested inside the bar chart's `Row`, causing a silent layout failure that broke touch handling across the whole Planning tab. Fixed by moving the card list back to its own top-level section in the outer `Column`.
+- **Chart card showing white instead of themed color**: `Card` was wrapped in a `Container` with colored `BoxDecoration`, but `Card`'s own opaque background covered it, leaving only a thin colored outline visible. Fixed by removing the wrapper and using `Card`'s own `color:` property directly.
+- **Overlapping axis labels**: fixed-width chart couldn't fit all category names side-by-side without collision. Fixed by making the chart horizontally scrollable — `SingleChildScrollView(scrollDirection: Axis.horizontal)` wrapping a `SizedBox` sized dynamically (`budgetCategories.length * 100`, converted to `double`), wrapped in `Expanded` inside the `Row` so the scroll view has a bounded viewport to scroll within.
+
+### New Features
+- **Bar chart wrapped in a themed `Card`**, matching the Statistics tab's pie chart styling.
+
+### Known Issues — Next Session
+1. **Legend not yet built** — still need a color key (e.g. "● Planned ● Spent") beside the chart, same pattern as the pie chart's legend.
+
 ## 👩🏽‍💻 Developer
 
 Built by Beth.
